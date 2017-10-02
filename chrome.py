@@ -15,6 +15,7 @@ LBL_LOGIN = "Login"
 LBL_INVALID_CREDENTIALS = "Wrong login/password"
 LBL_SUCCESS_LOGIN_MSG = "Congratulations, your inbox is empty"
 LBL_NAVIGATION = "Navigation"
+LBL_INVENTORY = "Create inventory product"
 SLEEP_TIME = 3
 WAIT_TIME = 5
 
@@ -61,6 +62,61 @@ def odoo_login(driver):
         return False
 
 
+def create_inventory_product():
+    print("{} test started @{}".format(LBL_INVENTORY, datetime.today()))
+    driver = driver_connection()
+
+    if odoo_login(driver):
+        wait = WebDriverWait(driver, WAIT_TIME)
+
+        driver.find_element(By.XPATH, '//span[contains(text(), "{0}") and @class="oe_menu_text"]'.format("Inventory")).click()
+
+        try:
+            wait.until(EC.visibility_of_element_located(
+                (By.XPATH, '//div[contains(text(), "{0}") and @class="oe_secondary_menu_section"]'
+                    .format("Inventory Control")
+                )
+            ))
+
+            driver.find_element(By.XPATH, '//div[contains(text(), "{0}") and @class="oe_secondary_menu_section"]/following-sibling::ul/li/a/span'
+                .format("Inventory Control")).click()
+            
+            try:
+                wait.until(EC.visibility_of_element_located(
+                    (By.XPATH, '//button[contains(text(), "{0}")]'.format("Create"))
+                ))
+
+                time.sleep(SLEEP_TIME)
+
+                driver.find_element(By.XPATH, '//button[contains(text(), "{0}")]'.format("Create")).click()
+
+                time.sleep(SLEEP_TIME)
+                
+                try:
+                    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "oe_avatar")))
+                    product_name = driver.find_element_by_id("oe-field-input-4")
+                    product_name.send_keys("Selenium")
+
+                    el = driver.find_element_by_id('oe-field-input-14')
+                    for option in el.find_elements_by_tag_name('option'):
+                        if option.text.strip() == 'Consumable':
+                            option.click()
+                            break
+
+                    time.sleep(SLEEP_TIME)
+                    driver.quit()
+                except TimeoutException:
+                    print("Timed out while testing {} :3".format(LBL_INVENTORY))
+
+            except TimeoutException:
+                print("Timed out while testing {} :2".format(LBL_INVENTORY))
+
+        except TimeoutException:
+            print("Timed out while testing {} :1".format(LBL_INVENTORY))
+    else:
+        print("{} test failed.".format(LBL_INVENTORY))
+
+
 def test_successfull_logout():
     print("{} test started @{}".format(LBL_LOGOUT, datetime.today()))
     driver = driver_connection()
@@ -71,7 +127,7 @@ def test_successfull_logout():
         try:
             wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'oe_topbar_name')))
             driver.find_element(By.XPATH, '//span[@class="oe_topbar_name"]').click()
-            time.sleep(2)
+            time.sleep(SLEEP_TIME)
             driver.find_element(By.XPATH, '//a[@data-menu="logout"]').click()
 
             try:
@@ -176,7 +232,8 @@ def test_navigate():
         print("Timed out while testing {}".format(LBL_NAVIGATION))
 
 if __name__ == "__main__":
-    test_navigate()
-    test_bad_login_credentials()
-    test_successfull_login()
-    test_successfull_logout()
+    # test_navigate()
+    # test_bad_login_credentials()
+    # test_successfull_login()
+    # test_successfull_logout()
+    create_inventory_product()
