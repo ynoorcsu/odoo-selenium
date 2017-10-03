@@ -1,6 +1,7 @@
 #!venv/bin/python3.4
 import os
 import time
+import random
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -8,6 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.action_chains import ActionChains
 
 BASE_URL = "http://bravojava.asuscomm.com:8069"
 LBL_LOGOUT = "Logout"
@@ -103,8 +105,20 @@ def create_inventory_product():
                             option.click()
                             break
 
-                    time.sleep(SLEEP_TIME)
-                    driver.quit()
+                    product_price = driver.find_element_by_id("oe-field-input-20")
+                    product_price.clear();
+                    product_price.send_keys(str(round(random.uniform(10.00, 20.00), 2)))
+
+                    driver.find_element(By.XPATH, '//div[@class="o_stat_info published"]/span[contains(text(), "{0}")]'.format("Not Published")).click()
+
+                    try:
+                        wait.until(EC.visibility_of_element_located((By.XPATH, '//button[contains(text(),"{0}")]'.format("Not Published"))))
+                        driver.find_element(By.XPATH, '//button[contains(text(),"{0}")]'.format("Not Published")).click()
+                        time.sleep(SLEEP_TIME)
+                        driver.quit()
+                    except TimeoutException:
+                        print("Timed out while testing {} :4".format(LBL_INVENTORY))
+
                 except TimeoutException:
                     print("Timed out while testing {} :3".format(LBL_INVENTORY))
 
