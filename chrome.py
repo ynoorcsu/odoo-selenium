@@ -17,7 +17,7 @@ BASE_URL = "http://bravojava.asuscomm.com:8069"
 LBL_LOGOUT = "Logout"
 LBL_LOGIN = "Login"
 LBL_INVALID_CREDENTIALS = "Wrong login/password"
-LBL_SUCCESS_LOGIN_MSG = "Congratulations, your inbox is empty"
+LBL_SUCCESS_LOGIN_MSG = "#Inbox"
 LBL_NAVIGATION = "Navigation"
 LBL_INVENTORY = "Create inventory product"
 LBL_DEL_INVENTORY = "Delete inventory product"
@@ -41,31 +41,44 @@ def odoo_login(driver):
     # navigate to the application home page
     driver.get(BASE_URL + "/web/login")
 
-    # get the login textbox
-    login_field = driver.find_element_by_name("login")
-    # enter username
-    login_field.send_keys("bravo90503@yahoo.com")
-
-    # get the login textbox
-    password_field = driver.find_element_by_name("password")
-    # enter password
-    password_field.send_keys("bravo90503")
-
-    # Find the submit button
-    driver.find_element(By.XPATH, '//button[text()="Log in"]').click()
-
+    # setup wait time
     wait = WebDriverWait(driver, WAIT_TIME)
 
-    try:
-        wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'o_thread_title')))
-        inbox_message = driver.find_element_by_class_name("o_thread_title").text
+    # add manual wait
+    time.sleep(SLEEP_TIME)
 
-        if inbox_message == LBL_SUCCESS_LOGIN_MSG:
-            return True
-        else:
+    try:
+        # wait until the element is visible in the GUI
+        wait.until(EC.visibility_of_element_located((By.NAME, 'login')))
+
+        # get the login textbox
+        login_field = driver.find_element_by_name("login")
+        # enter username
+        login_field.send_keys("bravo90503@yahoo.com")
+
+        # get the login textbox
+        password_field = driver.find_element_by_name("password")
+        # enter password
+        password_field.send_keys("bravo90503")
+
+        # Find the submit button
+        driver.find_element(By.XPATH, '//button[text()="Log in"]').click()
+
+        try:
+            # wait until the element is visible in the GUI
+            wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'o_thread_title')))
+
+            # find #Inbox text
+            inbox_message = driver.find_element(By.XPATH, '//li[contains(text(), "{0}")]'.format('#Inbox')).text
+
+            if inbox_message == LBL_SUCCESS_LOGIN_MSG:
+                return True
+            else:
+                return False
+        except TimeoutException:
             return False
     except TimeoutException:
-        return False
+        print("Couldn't find login")
 
 
 def delete_inventory_product():
