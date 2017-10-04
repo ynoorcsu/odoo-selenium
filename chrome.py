@@ -106,11 +106,11 @@ def delete_inventory_product():
                 ))
 
                 try:
-                    list = driver.find_elements_by_css_selector(".oe_kanban_details")
+                    kanban_details = driver.find_elements_by_css_selector(".oe_kanban_details")
                     
-                    for detail_div in list:
+                    for detail_div in kanban_details:
                         if detail_div.find_elements_by_tag_name('strong')[0].text.strip() == PRODUCT_NAME:
-                            detail_div.find_elements_by_tag_name('strong')[0].click()
+                            detail_div.click()
                             break
 
                     try:
