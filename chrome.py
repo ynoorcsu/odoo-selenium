@@ -10,6 +10,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.alert import Alert
+from selenium.common.exceptions import NoSuchElementException
 
 BASE_URL = "http://bravojava.asuscomm.com:8069"
 LBL_LOGOUT = "Logout"
@@ -18,6 +20,7 @@ LBL_INVALID_CREDENTIALS = "Wrong login/password"
 LBL_SUCCESS_LOGIN_MSG = "Congratulations, your inbox is empty"
 LBL_NAVIGATION = "Navigation"
 LBL_INVENTORY = "Create inventory product"
+LBL_DEL_INVENTORY = "Delete inventory product"
 SLEEP_TIME = 3
 WAIT_TIME = 5
 
@@ -62,6 +65,70 @@ def odoo_login(driver):
             return False
     except TimeoutException:
         return False
+
+
+def delete_inventory_product():
+    print("{} test started @{}".format(LBL_DEL_INVENTORY, datetime.today()))
+    driver = driver_connection()
+
+    if odoo_login(driver):
+        wait = WebDriverWait(driver, WAIT_TIME)
+
+        driver.find_element(By.XPATH, '//span[contains(text(), "{0}") and @class="oe_menu_text"]'.format("Inventory")).click()
+
+        try:
+            wait.until(EC.visibility_of_element_located(
+                (By.XPATH, '//div[contains(text(), "{0}") and @class="oe_secondary_menu_section"]'
+                    .format("Inventory Control")
+                )
+            ))
+
+            driver.find_element(By.XPATH, '//div[contains(text(), "{0}") and @class="oe_secondary_menu_section"]/following-sibling::ul/li/a/span'
+                .format("Inventory Control")).click()
+            
+            try:
+                wait.until(EC.visibility_of_element_located(
+                    (By.XPATH, '//button[contains(text(), "{0}")]'.format("Create"))
+                ))
+
+                try:
+                    list = driver.find_elements_by_css_selector(".oe_kanban_details")
+                    
+                    for x in list:
+                        if x.find_elements_by_tag_name('strong')[0].text.strip() == "Selenium":
+                            x.find_elements_by_tag_name('strong')[0].click()
+                            break
+
+                    try:
+                        wait.until(EC.visibility_of_element_located(
+                            (By.XPATH, '//button[contains(text(), "{0}")]'.format("Action"))
+                        ))
+
+                        action_button = driver.find_element(By.XPATH, '//button[contains(text(), "{0}")]'.format("Action"))
+                        delete_button = driver.find_element(By.XPATH, '//button[contains(text(), "{0}")]/following-sibling::ul/li/a'.format("Action"))
+
+                        delete_action = ActionChains(driver)
+                        delete_action.move_to_element(action_button)
+                        delete_action.click(action_button)
+                        delete_action.click(delete_button)
+                        delete_action.perform()
+
+                        Alert(driver).accept()
+
+                        print("Test status: Passed.")
+                        time.sleep(SLEEP_TIME)
+                        driver.quit()
+                    except TimeoutException:
+                        print("Timed out while testing {} :3".format(LBL_DEL_INVENTORY))    
+                except NoSuchElementException:
+                    print("There's no product named Selenium")
+            except TimeoutException:
+                print("Timed out while testing {} :2".format(LBL_DEL_INVENTORY))
+
+        except TimeoutException:
+            print("Timed out while testing {} :1".format(LBL_DEL_INVENTORY))
+    else:
+        print("{} test failed.".format(LBL_DEL_INVENTORY))
 
 
 def create_inventory_product():
@@ -114,6 +181,7 @@ def create_inventory_product():
                     try:
                         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[contains(text(),"{0}")]'.format("Not Published"))))
                         driver.find_element(By.XPATH, '//button[contains(text(),"{0}")]'.format("Not Published")).click()
+                        print("Test status: Passed.")
                         time.sleep(SLEEP_TIME)
                         driver.quit()
                     except TimeoutException:
@@ -250,4 +318,5 @@ if __name__ == "__main__":
     # test_bad_login_credentials()
     # test_successfull_login()
     # test_successfull_logout()
-    create_inventory_product()
+    # create_inventory_product()
+    delete_inventory_product()
