@@ -4,14 +4,14 @@ import time
 import random
 from datetime import datetime
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.alert import Alert
+from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
+
 
 BASE_URL = "http://bravojava.asuscomm.com:8069"
 LBL_LOGOUT = "Logout"
@@ -25,6 +25,7 @@ PRODUCT_NAME = "Selenium"
 SLEEP_TIME = 3
 WAIT_TIME = 5
 
+
 def driver_connection():
     # get the path of ChromeDriverServer
     dir = os.path.dirname(__file__)
@@ -36,6 +37,7 @@ def driver_connection():
     driver.maximize_window()
 
     return driver
+
 
 def odoo_login(driver):
     # navigate to the application home page
