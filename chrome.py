@@ -213,7 +213,7 @@ def create_inventory_product():
         print("{} test failed.".format(LBL_INVENTORY))
 
 
-def test_successfull_logout():
+def test_successful_logout():
     print("{} test started @{}".format(LBL_LOGOUT, datetime.today()))
     driver = driver_connection()
 
@@ -246,7 +246,7 @@ def test_successfull_logout():
         print("{} test failed.".format(LBL_LOGOUT))
 
 
-def test_successfull_login():
+def test_successful_login():
     print("{} test started @{}".format(LBL_LOGIN, datetime.today()))
     driver = driver_connection()
 
@@ -299,7 +299,7 @@ def test_bad_login_credentials():
         print("Timed out while testing {}".format(LBL_INVALID_CREDENTIALS))
 
 
-def test_navigate():
+def test_navigation():
     print("{} test started @{}".format(LBL_NAVIGATION, datetime.today()))
 
     driver = driver_connection()
@@ -329,9 +329,9 @@ def test_navigate():
 
 
 if __name__ == "__main__":
-    test_navigate()
+    test_navigation()
     test_bad_login_credentials()
-    test_successfull_login()
-    test_successfull_logout()
+    test_successful_login()
+    test_successful_logout()
     create_inventory_product()
     delete_inventory_product()
