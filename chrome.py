@@ -21,6 +21,7 @@ LBL_SUCCESS_LOGIN_MSG = "Congratulations, your inbox is empty"
 LBL_NAVIGATION = "Navigation"
 LBL_INVENTORY = "Create inventory product"
 LBL_DEL_INVENTORY = "Delete inventory product"
+PRODUCT_NAME = "Selenium"
 SLEEP_TIME = 3
 WAIT_TIME = 5
 
@@ -94,9 +95,9 @@ def delete_inventory_product():
                 try:
                     list = driver.find_elements_by_css_selector(".oe_kanban_details")
                     
-                    for x in list:
-                        if x.find_elements_by_tag_name('strong')[0].text.strip() == "Selenium":
-                            x.find_elements_by_tag_name('strong')[0].click()
+                    for detail_div in list:
+                        if detail_div.find_elements_by_tag_name('strong')[0].text.strip() == PRODUCT_NAME:
+                            detail_div.find_elements_by_tag_name('strong')[0].click()
                             break
 
                     try:
@@ -121,7 +122,7 @@ def delete_inventory_product():
                     except TimeoutException:
                         print("Timed out while testing {} :3".format(LBL_DEL_INVENTORY))    
                 except NoSuchElementException:
-                    print("There's no product named Selenium")
+                    print("There's no product named ", PRODUCT_NAME)
             except TimeoutException:
                 print("Timed out while testing {} :2".format(LBL_DEL_INVENTORY))
 
@@ -164,7 +165,7 @@ def create_inventory_product():
                 try:
                     wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "oe_avatar")))
                     product_name = driver.find_element_by_id("oe-field-input-4")
-                    product_name.send_keys("Selenium")
+                    product_name.send_keys(PRODUCT_NAME)
 
                     el = driver.find_element_by_id('oe-field-input-14')
                     for option in el.find_elements_by_tag_name('option'):
@@ -314,9 +315,9 @@ def test_navigate():
         print("Timed out while testing {}".format(LBL_NAVIGATION))
 
 if __name__ == "__main__":
-    # test_navigate()
-    # test_bad_login_credentials()
-    # test_successfull_login()
-    # test_successfull_logout()
-    # create_inventory_product()
+    test_navigate()
+    test_bad_login_credentials()
+    test_successfull_login()
+    test_successfull_logout()
+    create_inventory_product()
     delete_inventory_product()
