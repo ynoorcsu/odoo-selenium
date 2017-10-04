@@ -327,6 +327,7 @@ def test_navigate():
     except TimeoutException:
         print("Timed out while testing {}".format(LBL_NAVIGATION))
 
+
 if __name__ == "__main__":
     test_navigate()
     test_bad_login_credentials()
