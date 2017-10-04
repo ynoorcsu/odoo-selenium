@@ -1,4 +1,4 @@
-#!/Users/yamin/Programming/Python/Selenium/Odoo/venv/bin/python
+#!/Users/yamin/Programming/Selenium/Odoo/venv/bin/python
 
 import sys
 import getopt
