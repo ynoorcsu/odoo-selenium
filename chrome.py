@@ -108,11 +108,16 @@ def delete_inventory_product():
                 ))
 
                 try:
-                    kanban_details = driver.find_elements_by_css_selector(".oe_kanban_details")
-                    
-                    for detail_div in kanban_details:
-                        if detail_div.find_elements_by_tag_name('strong')[0].text.strip() == PRODUCT_NAME:
-                            detail_div.click()
+                    global_clicks = driver.find_elements_by_css_selector(".oe_kanban_global_click")
+
+                    for g_click in global_clicks:
+                        kanban_details = g_click.find_element(By.XPATH, '//div[@class="oe_kanban_details"]/strong')
+
+                        if kanban_details.text.strip() == PRODUCT_NAME:
+                            global_click_action = ActionChains(driver)
+                            global_click_action.move_to_element(g_click)
+                            global_click_action.click(g_click)
+                            global_click_action.perform()
                             break
 
                     try:
