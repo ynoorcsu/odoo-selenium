@@ -32,7 +32,6 @@ def header_footer(f):
     def wrapped(*args, **kwargs):
         print("-" * 100)
         r = f(*args, **kwargs)
-        print("-" * 100)
         return r
     return wrapped
 
