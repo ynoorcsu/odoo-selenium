@@ -42,6 +42,7 @@ def driver_connection():
 def odoo_login(driver):
     # navigate to the application home page
     driver.get(BASE_URL + "/web/login")
+    print("  - Login page browsed")
 
     # setup wait time
     wait = WebDriverWait(driver, WAIT_TIME)
@@ -57,14 +58,17 @@ def odoo_login(driver):
         login_field = driver.find_element_by_name("login")
         # enter username
         login_field.send_keys("bravo90503@yahoo.com")
+        print("  - Username entered")
 
         # get the login textbox
         password_field = driver.find_element_by_name("password")
         # enter password
         password_field.send_keys("bravo90503")
+        print("  - Password entered")
 
         # Find the submit button
         driver.find_element(By.XPATH, '//button[text()="Log in"]').click()
+        print("  - Login button pressed")
 
         try:
             # wait until the element is visible in the GUI
@@ -88,9 +92,11 @@ def delete_inventory_product():
     driver = driver_connection()
 
     if odoo_login(driver):
+        print("  - Successfully logged in")
         wait = WebDriverWait(driver, WAIT_TIME)
 
         driver.find_element(By.XPATH, '//span[contains(text(), "{0}") and @class="oe_menu_text"]'.format("Inventory")).click()
+        print("  - Clicked Inventory in the top navigation")
 
         try:
             wait.until(EC.visibility_of_element_located(
@@ -101,11 +107,13 @@ def delete_inventory_product():
 
             driver.find_element(By.XPATH, '//div[contains(text(), "{0}") and @class="oe_secondary_menu_section"]/following-sibling::ul/li/a/span'
                 .format("Inventory Control")).click()
+            print("  - Clicked Products under the Inventory Control navigation")
             
             try:
                 wait.until(EC.visibility_of_element_located(
                     (By.XPATH, '//button[contains(text(), "{0}")]'.format("Create"))
                 ))
+                print("  - Waited for Create button to appear")
 
                 try:
                     kanban_details = driver.find_element(By.XPATH, '//div[@class="oe_kanban_details"]/strong[contains(text(), "{0}")]'.format(PRODUCT_NAME))
@@ -113,10 +121,12 @@ def delete_inventory_product():
                     time.sleep(SLEEP_TIME)
 
                     if kanban_details.text.strip() == PRODUCT_NAME:
+                        print("  - Product name matched")
                         global_click_action = ActionChains(driver)
                         global_click_action.move_to_element(kanban_details)
                         global_click_action.click(kanban_details)
                         global_click_action.perform()
+                        print("  - Clicked on the product")
 
                     try:
                         wait.until(EC.visibility_of_element_located(
@@ -132,7 +142,11 @@ def delete_inventory_product():
                         delete_action.click(delete_button)
                         delete_action.perform()
 
+                        print("  - Selected Action -> Delete option")
+
                         Alert(driver).accept()
+
+                        print("  - Alert OK button pressed")
 
                         print("Test status: Passed.")
                         time.sleep(SLEEP_TIME)
@@ -155,9 +169,11 @@ def create_inventory_product():
     driver = driver_connection()
 
     if odoo_login(driver):
+        print("  - Successfully logged in")
         wait = WebDriverWait(driver, WAIT_TIME)
 
         driver.find_element(By.XPATH, '//span[contains(text(), "{0}") and @class="oe_menu_text"]'.format("Inventory")).click()
+        print("  - Clicked Inventory in the top navigation")
 
         try:
             wait.until(EC.visibility_of_element_located(
@@ -168,15 +184,18 @@ def create_inventory_product():
 
             driver.find_element(By.XPATH, '//div[contains(text(), "{0}") and @class="oe_secondary_menu_section"]/following-sibling::ul/li/a/span'
                 .format("Inventory Control")).click()
+            print("  - Clicked Products under the Inventory Control navigation")
             
             try:
                 wait.until(EC.visibility_of_element_located(
                     (By.XPATH, '//button[contains(text(), "{0}")]'.format("Create"))
                 ))
+                print("  - Waited for Create button to appear")
 
                 time.sleep(SLEEP_TIME)
 
                 driver.find_element(By.XPATH, '//button[contains(text(), "{0}")]'.format("Create")).click()
+                print("  - Pressed Create button")
 
                 time.sleep(SLEEP_TIME)
                 
@@ -184,24 +203,31 @@ def create_inventory_product():
                     wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "oe_avatar")))
                     product_name = driver.find_element_by_id("oe-field-input-4")
                     product_name.send_keys(PRODUCT_NAME)
+                    print("  - Typed product name")
 
                     driver.find_element_by_name("ufile").send_keys(os.getcwd()+"/images/selenium.jpg")
+                    print("  - Uploaded product image")
 
                     el = driver.find_element_by_id('oe-field-input-14')
                     for option in el.find_elements_by_tag_name('option'):
                         if option.text.strip() == 'Consumable':
                             option.click()
+                            print("  - Product Type: Comsumable selected")
                             break
 
                     product_price = driver.find_element_by_id("oe-field-input-20")
                     product_price.clear();
-                    product_price.send_keys(str(round(random.uniform(10.00, 20.00), 2)))
+                    price = str(round(random.uniform(10.00, 20.00), 2))
+                    product_price.send_keys(price)
+                    print("  - Product price set to: ${0}".format(price))
 
                     driver.find_element(By.XPATH, '//div[@class="o_stat_info published"]/span[contains(text(), "{0}")]'.format("Not Published")).click()
+                    print("  - Clicked on 'Not Published'")
 
                     try:
                         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[contains(text(),"{0}")]'.format("Not Published"))))
                         driver.find_element(By.XPATH, '//button[contains(text(),"{0}")]'.format("Not Published")).click()
+                        print("  - Pressed published button")
                         print("Test status: Passed.")
                         time.sleep(SLEEP_TIME)
                         driver.quit()
@@ -225,13 +251,16 @@ def test_successful_logout():
     driver = driver_connection()
 
     if odoo_login(driver):
+        print("  - Successfully logged in")
         wait = WebDriverWait(driver, WAIT_TIME)
 
         try:
             wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'oe_topbar_name')))
             driver.find_element(By.XPATH, '//span[@class="oe_topbar_name"]').click()
+            print("  - Administrator drop down opened")
             time.sleep(SLEEP_TIME)
             driver.find_element(By.XPATH, '//a[@data-menu="logout"]').click()
+            print("  - Logout clicked")
 
             try:
                 wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@type="submit"]')))
@@ -258,8 +287,10 @@ def test_successful_login():
     driver = driver_connection()
 
     if odoo_login(driver):
+        print("  - Successfully logged in")
         passed = "Passed"
     else:
+        print("  - Login unsuccessful")
         passed = "Failed"
 
     print("Test status: {}.".format(passed))
@@ -274,19 +305,23 @@ def test_bad_login_credentials():
 
     # navigate to the application home page
     driver.get(BASE_URL + "/web/login")
+    print("  - Login page browsed")
 
     # get the login textbox
     login_field = driver.find_element_by_name("login")
     # enter username
     login_field.send_keys("ynoor@csu.fullerton.edu")
+    print("  - Username entered")
 
     # get the login textbox
     password_field = driver.find_element_by_name("password")
     # enter password
     password_field.send_keys("$0m3Str@nG3P@55wOrd")
+    print("  - Password entered")
 
     # Find the submit button
     driver.find_element(By.XPATH, '//button[text()="Log in"]').click()
+    print("  - Login button pressed")
 
     wait = WebDriverWait(driver, WAIT_TIME)
 
@@ -296,8 +331,10 @@ def test_bad_login_credentials():
 
         if alert_danger == LBL_INVALID_CREDENTIALS:
             passed = "Passed"
+            print("  - Message retrieved")
         else:
             passed = "Failed"
+            print("  - Couldn't find any message")
 
         print("Test status: {}.".format(passed))
         time.sleep(SLEEP_TIME)
@@ -313,9 +350,13 @@ def test_navigation():
 
     # navigate to the application home page
     driver.get(BASE_URL + "/")
+    print("  - Home page browsed")
     driver.get(BASE_URL + "/shop")
+    print("  - Shop page browsed")
     driver.get(BASE_URL + "/event")
+    print("  - Event page browsed")
     driver.get(BASE_URL + "/page/contactus")
+    print("  - Contact us page browsed")
 
     wait = WebDriverWait(driver, WAIT_TIME)
 
@@ -335,10 +376,21 @@ def test_navigation():
         print("Timed out while testing {}".format(LBL_NAVIGATION))
 
 
+def header_footer():
+    print("-" * 100)
+
+
 if __name__ == "__main__":
+    header_footer()
     test_navigation()
+    header_footer()
     test_bad_login_credentials()
+    header_footer()
     test_successful_login()
+    header_footer()
     test_successful_logout()
+    header_footer()
     create_inventory_product()
+    header_footer()
     delete_inventory_product()
+    header_footer()
