@@ -2,6 +2,7 @@
 import os
 import time
 import random
+from functools import wraps
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -24,6 +25,16 @@ LBL_DEL_INVENTORY = "Delete inventory product"
 PRODUCT_NAME = "Test-Driven Development with Python: Obey the Testing Goat: Using Django, Selenium, and JavaScript"
 SLEEP_TIME = 3
 WAIT_TIME = 5
+
+
+def header_footer(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        print("-" * 100)
+        r = f(*args, **kwargs)
+        print("-" * 100)
+        return r
+    return wrapped
 
 
 def driver_connection():
@@ -87,6 +98,7 @@ def odoo_login(driver):
         print("Couldn't find login")
 
 
+@header_footer
 def delete_inventory_product():
     print("{} test started @{}".format(LBL_DEL_INVENTORY, datetime.today()))
     driver = driver_connection()
@@ -164,6 +176,7 @@ def delete_inventory_product():
         print("{} test failed.".format(LBL_DEL_INVENTORY))
 
 
+@header_footer
 def create_inventory_product():
     print("{} test started @{}".format(LBL_INVENTORY, datetime.today()))
     driver = driver_connection()
@@ -246,6 +259,7 @@ def create_inventory_product():
         print("{} test failed.".format(LBL_INVENTORY))
 
 
+@header_footer
 def test_successful_logout():
     print("{} test started @{}".format(LBL_LOGOUT, datetime.today()))
     driver = driver_connection()
@@ -282,6 +296,7 @@ def test_successful_logout():
         print("{} test failed.".format(LBL_LOGOUT))
 
 
+@header_footer
 def test_successful_login():
     print("{} test started @{}".format(LBL_LOGIN, datetime.today()))
     driver = driver_connection()
@@ -298,6 +313,7 @@ def test_successful_login():
     driver.quit()
 
 
+@header_footer
 def test_bad_login_credentials():
     print("{} test started @{}".format(LBL_INVALID_CREDENTIALS, datetime.today()))
 
@@ -343,6 +359,7 @@ def test_bad_login_credentials():
         print("Timed out while testing {}".format(LBL_INVALID_CREDENTIALS))
 
 
+@header_footer
 def test_navigation():
     print("{} test started @{}".format(LBL_NAVIGATION, datetime.today()))
 
@@ -376,21 +393,10 @@ def test_navigation():
         print("Timed out while testing {}".format(LBL_NAVIGATION))
 
 
-def header_footer():
-    print("-" * 100)
-
-
 if __name__ == "__main__":
-    header_footer()
     test_navigation()
-    header_footer()
     test_bad_login_credentials()
-    header_footer()
     test_successful_login()
-    header_footer()
     test_successful_logout()
-    header_footer()
     create_inventory_product()
-    header_footer()
     delete_inventory_product()
-    header_footer()
