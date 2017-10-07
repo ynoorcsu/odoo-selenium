@@ -21,7 +21,7 @@ LBL_SUCCESS_LOGIN_MSG = "#Inbox"
 LBL_NAVIGATION = "Navigation"
 LBL_INVENTORY = "Create inventory product"
 LBL_DEL_INVENTORY = "Delete inventory product"
-PRODUCT_NAME = "Selenium"
+PRODUCT_NAME = "Test-Driven Development with Python: Obey the Testing Goat: Using Django, Selenium, and JavaScript"
 SLEEP_TIME = 3
 WAIT_TIME = 5
 
@@ -108,17 +108,15 @@ def delete_inventory_product():
                 ))
 
                 try:
-                    global_clicks = driver.find_elements_by_css_selector(".oe_kanban_global_click")
+                    kanban_details = driver.find_element(By.XPATH, '//div[@class="oe_kanban_details"]/strong[contains(text(), "{0}")]'.format(PRODUCT_NAME))
 
-                    for g_click in global_clicks:
-                        kanban_details = g_click.find_element(By.XPATH, '//div[@class="oe_kanban_details"]/strong')
+                    time.sleep(SLEEP_TIME)
 
-                        if kanban_details.text.strip() == PRODUCT_NAME:
-                            global_click_action = ActionChains(driver)
-                            global_click_action.move_to_element(g_click)
-                            global_click_action.click(g_click)
-                            global_click_action.perform()
-                            break
+                    if kanban_details.text.strip() == PRODUCT_NAME:
+                        global_click_action = ActionChains(driver)
+                        global_click_action.move_to_element(kanban_details)
+                        global_click_action.click(kanban_details)
+                        global_click_action.perform()
 
                     try:
                         wait.until(EC.visibility_of_element_located(
@@ -186,6 +184,8 @@ def create_inventory_product():
                     wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "oe_avatar")))
                     product_name = driver.find_element_by_id("oe-field-input-4")
                     product_name.send_keys(PRODUCT_NAME)
+
+                    driver.find_element_by_name("ufile").send_keys(os.getcwd()+"/images/selenium.jpg")
 
                     el = driver.find_element_by_id('oe-field-input-14')
                     for option in el.find_elements_by_tag_name('option'):
