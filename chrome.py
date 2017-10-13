@@ -27,7 +27,7 @@ SLEEP_TIME = 3
 WAIT_TIME = 5
 
 
-def header_footer(f):
+def header(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
         print("-" * 100)
@@ -97,7 +97,7 @@ def odoo_login(driver):
         print("Couldn't find login")
 
 
-@header_footer
+@header
 def delete_inventory_product():
     print("{} test started @{}".format(LBL_DEL_INVENTORY, datetime.today()))
     driver = driver_connection()
@@ -175,7 +175,7 @@ def delete_inventory_product():
         print("{} test failed.".format(LBL_DEL_INVENTORY))
 
 
-@header_footer
+@header
 def create_inventory_product():
     print("{} test started @{}".format(LBL_INVENTORY, datetime.today()))
     driver = driver_connection()
@@ -258,7 +258,7 @@ def create_inventory_product():
         print("{} test failed.".format(LBL_INVENTORY))
 
 
-@header_footer
+@header
 def test_successful_logout():
     print("{} test started @{}".format(LBL_LOGOUT, datetime.today()))
     driver = driver_connection()
@@ -295,7 +295,7 @@ def test_successful_logout():
         print("{} test failed.".format(LBL_LOGOUT))
 
 
-@header_footer
+@header
 def test_successful_login():
     print("{} test started @{}".format(LBL_LOGIN, datetime.today()))
     driver = driver_connection()
@@ -312,7 +312,7 @@ def test_successful_login():
     driver.quit()
 
 
-@header_footer
+@header
 def test_bad_login_credentials():
     print("{} test started @{}".format(LBL_INVALID_CREDENTIALS, datetime.today()))
 
@@ -358,7 +358,7 @@ def test_bad_login_credentials():
         print("Timed out while testing {}".format(LBL_INVALID_CREDENTIALS))
 
 
-@header_footer
+@header
 def test_navigation():
     print("{} test started @{}".format(LBL_NAVIGATION, datetime.today()))
 
