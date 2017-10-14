@@ -6,6 +6,7 @@ Python scripts repo for testing following Odoo functionalities:
 - Successful logout test.
 - Create inventory product test.
 - Delete inventory product test.
+- Shopping cart test.
 
 # Prerequisites
 - Python 3.4+
