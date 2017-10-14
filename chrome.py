@@ -22,7 +22,11 @@ LBL_SUCCESS_LOGIN_MSG = "#Inbox"
 LBL_NAVIGATION = "Navigation"
 LBL_INVENTORY = "Create inventory product"
 LBL_DEL_INVENTORY = "Delete inventory product"
+LBL_SHOPPING_CART = "Shopping Cart"
 PRODUCT_NAME = "Test-Driven Development with Python: Obey the Testing Goat: Using Django, Selenium, and JavaScript"
+SEARCH_PLACEHOLDER = "Search..."
+DANCE_WITH_DRAGON = "A Dance with Dragons (A Song of Ice and Fire)"
+STRUTS_IN_ACTION = "Struts 2 in Action"
 SLEEP_TIME = 3
 WAIT_TIME = 5
 
@@ -95,6 +99,207 @@ def odoo_login(driver):
             return False
     except TimeoutException:
         print("Couldn't find login")
+
+
+@header
+def test_create_shopping_cart():
+    print("{} test started @{}".format(LBL_SHOPPING_CART, datetime.today()))
+
+    driver = driver_connection()
+
+    # navigate to the application home page
+    driver.get(BASE_URL + "/")
+    print("  - Home page browsed")
+    driver.get(BASE_URL + "/shop")
+    print("  - Shop page browsed")
+    
+    wait = WebDriverWait(driver, WAIT_TIME)
+
+    try:
+        wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'oe_search_box')))
+        search_box_placeholder = driver.find_element_by_name("search").get_property('placeholder')
+        print("  - Search box found")
+
+        dance_with_dragon_link = driver.find_element(By.XPATH, '//a[contains(text(), "{}")]'.format(DANCE_WITH_DRAGON))
+
+        if dance_with_dragon_link:
+            print("  - Found the book :: '{0}'".format(DANCE_WITH_DRAGON))
+
+        dance_with_dragon_action = ActionChains(driver)
+        dance_with_dragon_action.move_to_element(dance_with_dragon_link)
+        dance_with_dragon_action.click(dance_with_dragon_link)
+        dance_with_dragon_action.perform()
+        print("  - '{0}' book link clicked".format(DANCE_WITH_DRAGON))
+
+        try:
+            wait.until(EC.visibility_of_element_located((By.XPATH, '//h1[contains(text(), "{0}")]'.format(DANCE_WITH_DRAGON))))
+            print("  - '{0}' book details page loaded".format(DANCE_WITH_DRAGON))
+            qty = 2
+            quantity = driver.find_element_by_name("add_qty")
+            old_qty = quantity.get_property('value')
+            quantity.clear()
+            quantity.send_keys(qty)
+            print("  - Quantity changed from {0} to {1}".format(old_qty, qty))
+            time.sleep(SLEEP_TIME)
+
+            add_cart_link = driver.find_element(By.ID, 'add_to_cart')
+            add_cart_action = ActionChains(driver)
+            add_cart_action.move_to_element(add_cart_link)
+            add_cart_action.click(add_cart_link)
+            add_cart_action.perform()
+            print("  - 'Add to Cart' button pressed")
+
+            try:
+                wait.until(EC.visibility_of_element_located((By.XPATH, '//span[contains(text(), "{0}")]'.format("Process Checkout"))))
+                print("  - 'Process Checkout' found")
+
+                continue_shopping_btn = driver.find_element(By.XPATH, '//span[contains(text(), "{0}")]'.format("Continue Shopping"))
+
+                continue_shopping_action = ActionChains(driver)
+                continue_shopping_action.move_to_element(continue_shopping_btn)
+                continue_shopping_action.click(continue_shopping_btn)
+                continue_shopping_action.perform()
+                print("  - 'Continue Shopping' button pressed")
+
+                try:
+                    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'oe_search_box')))
+                    search_box_placeholder = driver.find_element_by_name("search").get_property('placeholder')
+                    print("  - Search box found")
+
+                    struts_in_action_link = driver.find_element(By.XPATH, '//a[contains(text(), "{}")]'.format(STRUTS_IN_ACTION))
+
+                    if struts_in_action_link:
+                        print("  - Found the book :: '{0}'".format(STRUTS_IN_ACTION))
+
+                    struts_in_action_action = ActionChains(driver)
+                    struts_in_action_action.move_to_element(struts_in_action_link)
+                    struts_in_action_action.click(struts_in_action_link)
+                    struts_in_action_action.perform()
+                    print("  - '{0}' book link clicked".format(STRUTS_IN_ACTION))
+                    
+                    try:
+                        wait.until(EC.visibility_of_element_located((By.XPATH, '//h1[contains(text(), "{0}")]'.format(STRUTS_IN_ACTION))))
+                        print("  - '{0}' book details page loaded".format(STRUTS_IN_ACTION))
+                        qty = 3
+                        quantity = driver.find_element_by_name("add_qty")
+                        old_qty = quantity.get_property('value')
+                        quantity.clear()
+                        quantity.send_keys(qty)
+                        print("  - Quantity changed from {0} to {1}".format(old_qty, qty))
+                        time.sleep(SLEEP_TIME)
+
+                        add_cart_link = driver.find_element(By.ID, 'add_to_cart')
+                        add_cart_action = ActionChains(driver)
+                        add_cart_action.move_to_element(add_cart_link)
+                        add_cart_action.click(add_cart_link)
+                        add_cart_action.perform()
+                        print("  - 'Add to Cart' button pressed")
+
+                        try:
+                            wait.until(EC.visibility_of_element_located((By.XPATH, '//span[contains(text(), "{0}")]'.format("Process Checkout"))))
+                            print("  - 'Process Checkout' found")
+
+                            process_checkout_btn2 = driver.find_element(By.XPATH, '//span[contains(text(), "{0}")]'.format("Process Checkout"))
+
+                            process_checkout_action2 = ActionChains(driver)
+                            process_checkout_action2.move_to_element(process_checkout_btn2)
+                            process_checkout_action2.click(process_checkout_btn2)
+                            process_checkout_action2.perform()
+                            print("  - 'Process Checkout' button pressed")
+
+                            try:
+                                wait.until(EC.visibility_of_element_located((By.XPATH, '//h3[contains(text(), "{0}")]'.format("Billing Information"))))
+                                print("  - Billing page loaded")
+
+                                name = driver.find_element_by_name("name")
+                                company = driver.find_element_by_name("street")
+                                email = driver.find_element_by_name("email")
+                                phone = driver.find_element_by_name("phone")
+                                street = driver.find_element_by_name("street2")
+                                city = driver.find_element_by_name("city")
+                                zip = driver.find_element_by_name("zip")
+
+                                name.send_keys("Selenium Testing")
+                                print("  - Typed the billing name")
+                                time.sleep(1)
+                                company.send_keys("Titan Champs")
+                                print("  - Typed the billing company name")
+                                time.sleep(1)
+                                email.send_keys("selenium@titanchamps.org")
+                                print("  - Typed the billing email address")
+                                time.sleep(1)
+                                phone.send_keys("(800) 123-4567")
+                                print("  - Typed the billing phone number")
+                                time.sleep(1)
+                                street.send_keys("123 University St")
+                                print("  - Typed the billing street address")
+                                time.sleep(1)
+                                city.send_keys("Fullerton")
+                                print("  - Typed the billing city")
+                                time.sleep(1)
+                                zip.send_keys("92831")
+                                print("  - Typed billing zipcode")
+
+                                country = driver.find_element_by_name('country_id')
+                                for option in country.find_elements_by_tag_name('option'):
+                                    if option.text.strip() == 'United States':
+                                        option.click()
+                                        print("  - Selected the billing Country")
+                                        break
+                                
+                                time.sleep(SLEEP_TIME)
+
+                                state = driver.find_element_by_name('state_id')
+                                for option in state.find_elements_by_tag_name('option'):
+                                    if option.text.strip() == 'California':
+                                        option.click()
+                                        print("  - Selected the billing State")
+                                        break
+
+                                confirm_link = driver.find_element_by_css_selector('a.a-submit')
+
+                                confirm_link_acion = ActionChains(driver)
+                                confirm_link_acion.move_to_element(confirm_link)
+                                confirm_link_acion.click(confirm_link)
+                                confirm_link_acion.perform()
+                                print("  - 'Confirm' button pressed")
+
+                                try:
+                                    wait.until(EC.visibility_of_element_located((By.XPATH, '//h1[contains(text(), "{0}")]'.format("Validate Order"))))
+                                    print("  - Validate Order page loaded")
+
+                                    pay_now_btn = driver.find_element(By.XPATH, '//span[contains(text(), "{0}")]/ancestor::button'.format("Pay Now"))
+
+                                    pay_now_btn_action = ActionChains(driver)
+                                    pay_now_btn_action.move_to_element(pay_now_btn)
+                                    pay_now_btn_action.click(pay_now_btn)
+                                    pay_now_btn_action.perform()
+                                    print("  - 'Pay Now' button pressed")
+
+                                    try:
+                                        wait.until(EC.visibility_of_element_located((By.XPATH, '//h2[contains(text(), "{0}")]'.format("Thank you for your order."))))
+                                        print("  - Order complete")
+                                        print("Test status: Passed.")
+                                        time.sleep(SLEEP_TIME)
+                                        driver.quit()
+                                    except TimeoutException:
+                                        print("Timed out while testing {} :9".format(LBL_SHOPPING_CART))
+                                except TimeoutException:
+                                    print("Timed out while testing {} :8".format(LBL_SHOPPING_CART))
+                            except TimeoutException:
+                                print("Timed out while testing {} :7".format(LBL_SHOPPING_CART))
+                        except TimeoutException:
+                            print("Timed out while testing {} :6".format(LBL_SHOPPING_CART))
+                    except TimeoutException:
+                        print("Timed out while testing {} :5".format(LBL_SHOPPING_CART))
+                except TimeoutException:
+                    print("Timed out while testing {} :4".format(LBL_SHOPPING_CART))
+            except TimeoutException:
+                print("Timed out while testing {} :3".format(LBL_SHOPPING_CART))
+        except TimeoutException:
+            print("Timed out while testing {} :2".format(LBL_SHOPPING_CART))
+    except TimeoutException:
+        print("Timed out while testing {} :1".format(LBL_SHOPPING_CART))
 
 
 @header
@@ -399,3 +604,4 @@ if __name__ == "__main__":
     test_successful_logout()
     create_inventory_product()
     delete_inventory_product()
+    test_create_shopping_cart()
