@@ -10,7 +10,12 @@ Python scripts repo for testing following Odoo functionalities:
 
 # Prerequisites
 - Python 3.4+
+  - How to install python on Windows: http://www.ics.uci.edu/~pattis/common/handouts/pythoneclipsejava/python.html
+  - How to install python on Mac: http://www.macworld.co.uk/how-to/mac/coding-with-python-on-mac-3635912/
+- pip
+  - It should be already installed. Comes built-in with Python 3.4+ installation.
 - Virtualenv
+  -  How to install virtualenv: https://virtualenv.pypa.io/en/stable/installation/
 - Git
 - Chrome Browser
 - Download OS Specific driver (ex: chromdriver, geckodriver) from: http://www.seleniumhq.org/download/
