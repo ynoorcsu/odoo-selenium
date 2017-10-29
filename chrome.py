@@ -48,7 +48,10 @@ def driver_connection():
     # create a new Chrome session
     driver = webdriver.Chrome(chrome_driver_path)
     driver.implicitly_wait(30)
+    driver.set_window_position(0, 0)
+    driver.set_window_size(1024, 600)
     driver.maximize_window()
+    
 
     return driver
 
@@ -82,7 +85,7 @@ def odoo_login(driver):
 
         # Find the submit button
         driver.find_element(By.XPATH, '//button[text()="Log in"]').click()
-        print("  - Login button pressed")
+        print("  - Login button clicked")
 
         try:
             # wait until the element is visible in the GUI
@@ -147,7 +150,7 @@ def test_create_shopping_cart():
             add_cart_action.move_to_element(add_cart_link)
             add_cart_action.click(add_cart_link)
             add_cart_action.perform()
-            print("  - 'Add to Cart' button pressed")
+            print("  - 'Add to Cart' button clicked")
 
             try:
                 wait.until(EC.visibility_of_element_located((By.XPATH, '//span[contains(text(), "{0}")]'.format("Process Checkout"))))
@@ -159,7 +162,7 @@ def test_create_shopping_cart():
                 continue_shopping_action.move_to_element(continue_shopping_btn)
                 continue_shopping_action.click(continue_shopping_btn)
                 continue_shopping_action.perform()
-                print("  - 'Continue Shopping' button pressed")
+                print("  - 'Continue Shopping' button clicked")
 
                 try:
                     wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'oe_search_box')))
@@ -193,7 +196,7 @@ def test_create_shopping_cart():
                         add_cart_action.move_to_element(add_cart_link)
                         add_cart_action.click(add_cart_link)
                         add_cart_action.perform()
-                        print("  - 'Add to Cart' button pressed")
+                        print("  - 'Add to Cart' button clicked")
 
                         try:
                             wait.until(EC.visibility_of_element_located((By.XPATH, '//span[contains(text(), "{0}")]'.format("Process Checkout"))))
@@ -205,7 +208,7 @@ def test_create_shopping_cart():
                             process_checkout_action2.move_to_element(process_checkout_btn2)
                             process_checkout_action2.click(process_checkout_btn2)
                             process_checkout_action2.perform()
-                            print("  - 'Process Checkout' button pressed")
+                            print("  - 'Process Checkout' button clicked")
 
                             try:
                                 wait.until(EC.visibility_of_element_located((By.XPATH, '//h3[contains(text(), "{0}")]'.format("Billing Information"))))
@@ -262,7 +265,7 @@ def test_create_shopping_cart():
                                 confirm_link_acion.move_to_element(confirm_link)
                                 confirm_link_acion.click(confirm_link)
                                 confirm_link_acion.perform()
-                                print("  - 'Confirm' button pressed")
+                                print("  - 'Confirm' button clicked")
 
                                 try:
                                     wait.until(EC.visibility_of_element_located((By.XPATH, '//h1[contains(text(), "{0}")]'.format("Validate Order"))))
@@ -274,7 +277,7 @@ def test_create_shopping_cart():
                                     pay_now_btn_action.move_to_element(pay_now_btn)
                                     pay_now_btn_action.click(pay_now_btn)
                                     pay_now_btn_action.perform()
-                                    print("  - 'Pay Now' button pressed")
+                                    print("  - 'Pay Now' button clicked")
 
                                     try:
                                         wait.until(EC.visibility_of_element_located((By.XPATH, '//h2[contains(text(), "{0}")]'.format("Thank you for your order."))))
@@ -329,7 +332,7 @@ def delete_inventory_product():
                 wait.until(EC.visibility_of_element_located(
                     (By.XPATH, '//button[contains(text(), "{0}")]'.format("Create"))
                 ))
-                print("  - Waited for Create button to appear")
+                print("  - Waited for Create button to be visible")
 
                 try:
                     kanban_details = driver.find_element(By.XPATH, '//div[@class="oe_kanban_details"]/strong[contains(text(), "{0}")]'.format(PRODUCT_NAME))
@@ -350,23 +353,35 @@ def delete_inventory_product():
                         ))
 
                         action_button = driver.find_element(By.XPATH, '//button[contains(text(), "{0}")]'.format("Action"))
-                        delete_button = driver.find_element(By.XPATH, '//button[contains(text(), "{0}")]/following-sibling::ul/li/a'.format("Action"))
 
-                        delete_action = ActionChains(driver)
-                        delete_action.move_to_element(action_button)
-                        delete_action.click(action_button)
-                        delete_action.click(delete_button)
-                        delete_action.perform()
+                        action_btn_action = ActionChains(driver)
+                        action_btn_action.move_to_element(action_button)
+                        action_btn_action.click(action_button)
+                        action_btn_action.perform()
 
-                        print("  - Selected Action -> Delete option")
-
-                        Alert(driver).accept()
-
-                        print("  - Alert OK button pressed")
-
-                        print("Test status: Passed.")
                         time.sleep(SLEEP_TIME)
-                        driver.quit()
+
+                        try:
+                            wait.until(EC.visibility_of_element_located(
+                                (By.XPATH, '//button[contains(text(), "{0}")]/following-sibling::ul/li/a'.format("Action"))
+                            ))
+
+                            delete_button = driver.find_element(By.XPATH, '//button[contains(text(), "{0}")]/following-sibling::ul/li/a'.format("Action"))
+
+                            delete_action = ActionChains(driver)
+                            delete_action.move_to_element(delete_button)
+                            delete_action.click(delete_button)
+                            delete_action.perform()
+
+                            time.sleep(SLEEP_TIME)
+
+                            Alert(driver).accept()
+                            print("  - Alert OK button clicked")
+                            print("Test status: Passed.")
+                            time.sleep(SLEEP_TIME)
+                            driver.quit()
+                        except TimeoutException:
+                            print("Timed out while testing {} :4".format(LBL_DEL_INVENTORY))    
                     except TimeoutException:
                         print("Timed out while testing {} :3".format(LBL_DEL_INVENTORY))    
                 except NoSuchElementException:
@@ -407,12 +422,12 @@ def create_inventory_product():
                 wait.until(EC.visibility_of_element_located(
                     (By.XPATH, '//button[contains(text(), "{0}")]'.format("Create"))
                 ))
-                print("  - Waited for Create button to appear")
+                print("  - Waited for Create button to be visible")
 
                 time.sleep(SLEEP_TIME)
 
                 driver.find_element(By.XPATH, '//button[contains(text(), "{0}")]'.format("Create")).click()
-                print("  - Pressed Create button")
+                print("  - Clicked Create button")
 
                 time.sleep(SLEEP_TIME)
                 
@@ -444,7 +459,7 @@ def create_inventory_product():
                     try:
                         wait.until(EC.visibility_of_element_located((By.XPATH, '//button[contains(text(),"{0}")]'.format("Not Published"))))
                         driver.find_element(By.XPATH, '//button[contains(text(),"{0}")]'.format("Not Published")).click()
-                        print("  - Pressed published button")
+                        print("  - Clicked published button")
                         print("Test status: Passed.")
                         time.sleep(SLEEP_TIME)
                         driver.quit()
@@ -541,7 +556,7 @@ def test_bad_login_credentials():
 
     # Find the submit button
     driver.find_element(By.XPATH, '//button[text()="Log in"]').click()
-    print("  - Login button pressed")
+    print("  - Login button clicked")
 
     wait = WebDriverWait(driver, WAIT_TIME)
 
