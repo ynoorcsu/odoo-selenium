@@ -129,15 +129,16 @@ def test_navigation(driver_connection):
         contact_us_text = driver.find_element_by_css_selector("div.mt64 a").text
 
         if contact_us_text == "Send us an email":
-            passed = "Passed"
+            flag = "Passed"
         else:
-            passed = "Failed"
+            flag = "Failed"
 
-        print("Test status: {}.".format(passed))
+        assert flag == "Passed"
         time.sleep(SLEEP_TIME)
         driver.quit()
     except TimeoutException:
         print("Timed out while testing {}".format(LBL_NAVIGATION))
+        assert False
 
 
 @header
@@ -173,17 +174,18 @@ def test_bad_login_credentials(driver_connection):
         alert_danger = driver.find_element_by_class_name("alert-danger").text
 
         if alert_danger == LBL_INVALID_CREDENTIALS:
-            passed = "Passed"
+            flag = "Passed"
             print("  - Message retrieved")
         else:
-            passed = "Failed"
+            flag = "Failed"
             print("  - Couldn't find any message")
 
-        print("Test status: {}.".format(passed))
+        assert flag == "Passed"
         time.sleep(SLEEP_TIME)
         driver.quit()
     except TimeoutException:
         print("Timed out while testing {}".format(LBL_INVALID_CREDENTIALS))
+        assert False
 
 
 @header
@@ -193,12 +195,12 @@ def test_successful_login(driver_connection):
 
     if odoo_login(driver):
         print("  - Successfully logged in")
-        passed = "Passed"
+        flag = "Passed"
     else:
         print("  - Login unsuccessful")
-        passed = "Failed"
+        flag = "Failed"
 
-    print("Test status: {}.".format(passed))
+    assert flag == "Passed"
     time.sleep(SLEEP_TIME)
     driver.quit()
 
@@ -225,19 +227,22 @@ def test_successful_logout(driver_connection):
                 logout_text = driver.find_element(By.XPATH, '//button[@type="submit"]').text
                 
                 if logout_text == "Log in":
-                    passed = "Passed"
+                    flag = "Passed"
                 else:
-                    passed = "Failed"
+                    flag = "Failed"
 
-                print("Test status: {}.".format(passed))
+                assert flag == "Passed"
                 time.sleep(SLEEP_TIME)
                 driver.quit()
             except TimeoutException:
                 print("Timed out while testing {}".format(LBL_LOGOUT))
+                assert False
         except TimeoutException:
             print("Timed out while testing {}".format(LBL_LOGOUT))
+            assert False
     else:
         print("{} test failed.".format(LBL_LOGOUT))
+        assert False
 
 
 @header
@@ -306,21 +311,27 @@ def test_create_inventory_product(driver_connection):
                         driver.find_element(By.XPATH, '//button[contains(text(),"{0}")]'.format("Not Published")).click()
                         print("  - Clicked published button")
                         print("Test status: Passed.")
+                        assert True
                         time.sleep(SLEEP_TIME)
                         driver.quit()
                     except TimeoutException:
                         print("Timed out while testing {} :4".format(LBL_INVENTORY))
+                        assert False
 
                 except TimeoutException:
                     print("Timed out while testing {} :3".format(LBL_INVENTORY))
+                    assert False
 
             except TimeoutException:
                 print("Timed out while testing {} :2".format(LBL_INVENTORY))
+                assert False
 
         except TimeoutException:
             print("Timed out while testing {} :1".format(LBL_INVENTORY))
+            assert False
     else:
         print("{} test failed.".format(LBL_INVENTORY))
+        assert False
 
 
 @header
@@ -395,22 +406,28 @@ def test_delete_inventory_product(driver_connection):
 
                             Alert(driver).accept()
                             print("  - Alert OK button clicked")
+                            assert True
                             print("Test status: Passed.")
                             time.sleep(SLEEP_TIME)
                             driver.quit()
                         except TimeoutException:
-                            print("Timed out while testing {} :4".format(LBL_DEL_INVENTORY))    
+                            print("Timed out while testing {} :4".format(LBL_DEL_INVENTORY))
+                            assert False
                     except TimeoutException:
-                        print("Timed out while testing {} :3".format(LBL_DEL_INVENTORY))    
+                        print("Timed out while testing {} :3".format(LBL_DEL_INVENTORY))
+                        assert False
                 except NoSuchElementException:
                     print("There's no product named ", PRODUCT_NAME)
+                    assert False
             except TimeoutException:
                 print("Timed out while testing {} :2".format(LBL_DEL_INVENTORY))
-
+                assert False
         except TimeoutException:
             print("Timed out while testing {} :1".format(LBL_DEL_INVENTORY))
+            assert False
     else:
         print("{} test failed.".format(LBL_DEL_INVENTORY))
+        assert False
 
 
 @header
@@ -592,23 +609,33 @@ def test_create_shopping_cart(driver_connection):
                                         wait.until(EC.visibility_of_element_located((By.XPATH, '//h2[contains(text(), "{0}")]'.format("Thank you for your order."))))
                                         print("  - Order complete")
                                         print("Test status: Passed.")
+                                        assert True
                                         time.sleep(SLEEP_TIME)
                                         driver.quit()
                                     except TimeoutException:
                                         print("Timed out while testing {} :9".format(LBL_SHOPPING_CART))
+                                        assert False
                                 except TimeoutException:
                                     print("Timed out while testing {} :8".format(LBL_SHOPPING_CART))
+                                    assert False
                             except TimeoutException:
                                 print("Timed out while testing {} :7".format(LBL_SHOPPING_CART))
+                                assert False
                         except TimeoutException:
                             print("Timed out while testing {} :6".format(LBL_SHOPPING_CART))
+                            assert False
                     except TimeoutException:
                         print("Timed out while testing {} :5".format(LBL_SHOPPING_CART))
+                        assert False
                 except TimeoutException:
                     print("Timed out while testing {} :4".format(LBL_SHOPPING_CART))
+                    assert False
             except TimeoutException:
                 print("Timed out while testing {} :3".format(LBL_SHOPPING_CART))
+                assert False
         except TimeoutException:
             print("Timed out while testing {} :2".format(LBL_SHOPPING_CART))
+            assert False
     except TimeoutException:
         print("Timed out while testing {} :1".format(LBL_SHOPPING_CART))
+        assert False
